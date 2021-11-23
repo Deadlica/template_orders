@@ -33,7 +33,7 @@ public:
     }
 
     void pop() {
-        buffer.pop_front();
+        buffer.erase(buffer.begin());
         return;
     }
 
@@ -43,12 +43,25 @@ public:
         return;
     }
 
+    void remove(typename std::vector<T>::iterator It) {
+        buffer.erase(It);
+        return;
+    }
+
     const size_t size() const {
         return buffer.size();
     }
 
     bool empty() const {
         return buffer.empty();
+    }
+
+    const typename std::vector<T>::iterator begin() {
+        return buffer.begin();
+    }
+
+    const typename std::vector<T>::iterator end() {
+        return buffer.end();
     }
 
     void print() const {
