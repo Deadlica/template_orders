@@ -1,6 +1,29 @@
 #include <ctime>
 #include "p_queue.h"
 
+struct order {
+    order(std::string name, unsigned int price) {
+        this->name = name;
+        this->price = price;
+    }
+    std::string name;
+    unsigned int price;
+};
+
+template<>
+struct std::less<order> {
+    bool operator()(order value, order currentElement) {
+        return value.price < currentElement.price;
+    }
+};
+
+template<typename T>
+struct CompareOrderPrice {
+    auto operator()(T value, T iteratedValue) {
+        return value.price < iteratedValue.price;
+    }
+};
+
 void printSales(p_queue<order> sellOrders, p_queue<order> buyOrders);
 void addBrokers(p_queue<order>& queue);
 
@@ -23,17 +46,16 @@ int main() {
 
 void printSales(p_queue<order> sellOrders, p_queue<order> buyOrders) {
     unsigned int salesPrice;
-    for(size_t sIndex = 0, bIndex = 0; sIndex < sellOrders.size() && bIndex < buyOrders.size();) {
-        if(sellOrders[sIndex].price <= buyOrders[bIndex].price && sellOrders[sIndex].name != buyOrders[bIndex].name) {
-            salesPrice = sellOrders[sIndex].price;
-            std::cout << "Köpare: " << buyOrders[bIndex].name <<
-            ", Säljare: " << sellOrders[sIndex].name << ", Pris: " << salesPrice << "kr" << std::endl;
+    while(!sellOrders.empty() && !buyOrders.empty()) {
+        if(sellOrders.front().price <= buyOrders.front().price) {
+            salesPrice = sellOrders.front().price;
+            std::cout << "Köpare: " << buyOrders.front().name <<
+            ", Säljare: " << sellOrders.front().name << ", Pris: " << salesPrice << "kr" << std::endl;
             sellOrders.pop();
-            buyOrders.remove(buyOrders.begin() + bIndex);
-            bIndex = 0;
+            buyOrders.pop();
         }
         else {
-            bIndex++;
+            buyOrders.pop();
         }
     }
 }

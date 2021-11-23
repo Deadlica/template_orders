@@ -6,31 +6,11 @@
 #include <string>
 #include <vector>
 
-struct order {
-    order(std::string name, unsigned int price) {
-        this->name = name;
-        this->price = price;
-    }
-    std::string name;
-    unsigned int price;
-};
-
-template<typename T>
-struct CompareOrderPrice {
-    auto operator()(T value, T iteratedValue) {
-        return value.price < iteratedValue.price;
-    }
-};
-
-template<typename T, typename Priority = CompareOrderPrice<T>>
+template<typename T, typename Priority = std::less<T>>
 class p_queue {
 public:
     p_queue() {}
     explicit p_queue(Priority priorityCondition):prio(priorityCondition) {}
-
-    T operator[](size_t index) {
-        return buffer[index];
-    }
 
     void pop() {
         buffer.erase(buffer.begin());
@@ -43,9 +23,8 @@ public:
         return;
     }
 
-    void remove(typename std::vector<T>::iterator It) {
-        buffer.erase(It);
-        return;
+    const T front() const {
+        return buffer[0];
     }
 
     const size_t size() const {
@@ -54,14 +33,6 @@ public:
 
     bool empty() const {
         return buffer.empty();
-    }
-
-    const typename std::vector<T>::iterator begin() {
-        return buffer.begin();
-    }
-
-    const typename std::vector<T>::iterator end() {
-        return buffer.end();
     }
 
     void print() const {
